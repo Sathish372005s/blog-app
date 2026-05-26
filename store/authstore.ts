@@ -3,7 +3,7 @@ import {create} from 'zustand';
 interface AuthState {
     isAuthenticated : boolean;
     user : any;
-    loading : boolean;
+    loadings : boolean;
     token : string | null;
     register : (userData : any) => Promise<void>;
     login : (userData : any) => Promise<void>;
@@ -13,11 +13,11 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set)=>({
     isAuthenticated : false,
     user : null,
-    loading : false,
+    loadings : false,
     token : null,
     register : async (userData : any) => {
         console.log('authstore.register called with:', userData);
-        set({loading : true});
+        set({loadings : true});
         try {
             console.log('authstore.register payload:', userData);
             const {name,email,password} = userData;
@@ -37,11 +37,11 @@ export const useAuthStore = create<AuthState>((set)=>({
             console.error('authstore.register error:', err);
             throw err;
         } finally {
-            set({loading : false});
+            set({loadings : false});
         }
     },
     login : async (userData : any) => {
-        set({loading : true});
+        set({loadings : true});
         try {
             console.log('authstore.login payload:', userData);
             const {email,password} = userData;
@@ -54,7 +54,7 @@ export const useAuthStore = create<AuthState>((set)=>({
                     email,password
                 })
             });
-            const data = await res.json().catch(()=>({}));
+            const data = await res.json();
             console.log('authstore.login response:', res.status, data);
             if (res.ok) {
                 set({isAuthenticated : true, user : data.user, token : data.token});
@@ -64,7 +64,7 @@ export const useAuthStore = create<AuthState>((set)=>({
             console.error('authstore.login error:', err);
             throw err;
         } finally {
-            set({loading : false});
+            set({loadings : false});
         }
     },
     logout : () => {

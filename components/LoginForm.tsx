@@ -1,7 +1,6 @@
 "use client";
 
 import {Button} from "@/components/ui/button";
-import {Spinner} from "@/components/ui/spinner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,22 +12,21 @@ import { registerSchema } from "@/app/schema/auth";
 import { Field, FieldGroup, FieldLabel } from "./ui/field";
 import {useAuthStore} from "@/store/authstore";
 
-export default function RegisterForm() {
-    const {register: registerAction,loadings} = useAuthStore();
+export default function LoginForm() {
+    const {login: loginAction} = useAuthStore();
     const router = useRouter();
     const form = useForm({
         resolver : zodResolver(registerSchema),
         defaultValues :{
             name : "",
             email : "",
-            password : "",
         }
     })
 
     const onsubmit = async (data: any) =>{
         console.log('onsubmit called with:', data);
-        await registerAction(data);
-        router.push('/login');
+        await loginAction(data);
+        router.push('/');
     }
 
     const handleFormSubmit = form.handleSubmit(onsubmit);
@@ -37,18 +35,12 @@ export default function RegisterForm() {
         <div className="w-full md:w-[450px] mx-auto mt-10">
             <Card>
                 <CardHeader className="space-y-1">
-                    <CardTitle className=" flex text-2xl font-bold item-center justify-center">Register</CardTitle>
+                    <CardTitle className=" flex text-2xl font-bold item-center justify-center">Login</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={(e) => { e.preventDefault(); handleFormSubmit(e); }} className="w-full space-y-6" >
                         <FieldGroup className="space-y-4">
-                            <Controller name="name" control={form.control} render={({field,fieldState})=>(
-                                <Field className="space-y-1">
-                                    <FieldLabel className="text-xl font-bold text-primary">NAME</FieldLabel>
-                                    <Input className="space-y-1 p-4" placeholder="enter name" {...field}/>
-                                    {fieldState.error && <p className="text-red-500">{fieldState.error.message}</p>}
-                                </Field>
-                            )}/>
+                            
                             <Controller name="email" control={form.control} render={({field,fieldState})=>(
                                 <Field className="space-y-1">
                                     <FieldLabel className="text-xl font-bold text-primary">EMAIL</FieldLabel>
@@ -63,17 +55,9 @@ export default function RegisterForm() {
                                     {fieldState.error && <p className="text-red-500">{fieldState.error.message}</p>}
                                 </Field>
                             )}/>
-                            {
-                            loadings ? (
-                                <Button variant="ghost" disabled className="w-full">
-                                    <Spinner/>
-                                </Button>
-                            ) : (
-                                <Button variant="ghost" type="submit" className="hover:bg-primary/80 w-full">
-                                    register
-                                </Button>
-                            )
-                            }
+                            <Button variant="ghost" type="submit" className="hover:bg-primary/80">
+                                login
+                            </Button>
                         </FieldGroup>
                     </form>
                 </CardContent>
