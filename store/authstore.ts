@@ -1,13 +1,17 @@
 import {create} from 'zustand';
 
+import {registeruser,loginuser,meuser} from '../service/authservice'
+
 interface AuthState {
     isAuthenticated : boolean;
     user : any;
     loadings : boolean;
     token : string | null;
+    error : string | null;
     register : (userData : any) => Promise<void>;
     login : (userData : any) => Promise<void>;
     logout : () => void;
+    me : () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set)=>({
@@ -17,7 +21,7 @@ export const useAuthStore = create<AuthState>((set)=>({
     token : null,
     register : async (userData : any) => {
         console.log('authstore.register called with:', userData);
-        set({loadings : true});
+        set({loading : true});
         try {
             console.log('authstore.register payload:', userData);
             const {name,email,password} = userData;
@@ -37,11 +41,11 @@ export const useAuthStore = create<AuthState>((set)=>({
             console.error('authstore.register error:', err);
             throw err;
         } finally {
-            set({loadings : false});
+            set({loading : false});
         }
     },
     login : async (userData : any) => {
-        set({loadings : true});
+        set({loading : true});
         try {
             console.log('authstore.login payload:', userData);
             const {email,password} = userData;
@@ -54,7 +58,7 @@ export const useAuthStore = create<AuthState>((set)=>({
                     email,password
                 })
             });
-            const data = await res.json();
+            const data = await res.json().catch(()=>({}));
             console.log('authstore.login response:', res.status, data);
             if (res.ok) {
                 set({isAuthenticated : true, user : data.user, token : data.token});
@@ -64,10 +68,10 @@ export const useAuthStore = create<AuthState>((set)=>({
             console.error('authstore.login error:', err);
             throw err;
         } finally {
-            set({loadings : false});
+            set({loading : false});
         }
     },
     logout : () => {
-        set({isAuthenticated : false, user : null, token : null});
-    },
+        set({isAuthenticated : false, user : null, token : null, error : null})
+    }
 }))

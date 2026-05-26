@@ -6,8 +6,8 @@ export async function POST(req : Request,res :Response){
     try {
         await connectToDatabase()
         const body = await req.json()
-        const {email,name,password} = body
-        if(!email || !name || !password){
+        const {email,name,password,role} = body
+        if(!email || !name || !password || !role){
             return NextResponse.json({success :false,message : "all fields are reuired"},{status : 400})
         }
         const existinguser = await User.findOne({email})
@@ -18,7 +18,8 @@ export async function POST(req : Request,res :Response){
         const user = await User.create({
             name,
             email,
-            password : hashedpassword
+            password : hashedpassword,
+            role
         })
         return NextResponse.json({success :true,message : "user created successfully"},{status : 201})
 
