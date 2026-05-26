@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import {verifytoken} from "@/lib/jwt";
 import { NextResponse } from "next/server";
+import User from "@/models/User";
 export async function GET(){
     try{
         const cookieStore = await cookies();
@@ -12,6 +13,7 @@ export async function GET(){
         if(!decoded){
             return NextResponse.json({success :false,message : "invalid token"},{status : 401})
         }
+        
         return  NextResponse.json({success :true,message : "user authenticated",user : decoded})
     }
     catch(error){

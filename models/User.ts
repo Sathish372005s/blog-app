@@ -17,6 +17,11 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    role: {
+      type: String,
+      enum : ["freelancer","client"],
+      required: true,
+    },
   },
   {
     timestamps: true,
