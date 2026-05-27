@@ -5,7 +5,7 @@ import {registeruser,loginuser,meuser} from '../service/authservice'
 interface AuthState {
     isAuthenticated : boolean;
     user : any;
-    loadings : boolean;
+    loading : boolean;
     token : string | null;
     error : string | null;
     register : (userData : any) => Promise<void>;
@@ -17,7 +17,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set)=>({
     isAuthenticated : false,
     user : null,
-    loadings : false,
+    loading : false,
     token : null,
     error : null,
 
@@ -25,27 +25,28 @@ export const useAuthStore = create<AuthState>((set)=>({
         try {
             set({loading : true});
             const response = await registeruser(userData);
-            set({user : response, loading : false});
+            console.log('register response:', response);
+            set({user : response.user, loading : false, error : null , isAuthenticated : true});
         }
         catch (error) {
-            set({error : "Registration failed"});
+            set({error : "Registration failed", loading : false});
         }
-        finally {
-            set({loading : false});
-        }
+      
     },
     login : async (userData) => {
         try{
+            console.log('login function called with server:', userData);
             set({loading : true});
             const response = await loginuser(userData);
+            console.log('login response:', response);
+
             set({user : response.user, isAuthenticated : true, token : response.token, loading : false});
+            return response.user;
         }
         catch (error) {
-            set({error : "Login failed"});
+            set({error : "Login failed", loading : false});
         }
-        finally {
-            set({loading : false});
-        }
+       
     },
 
     me : async () => {
@@ -55,10 +56,7 @@ export const useAuthStore = create<AuthState>((set)=>({
             set({user, isAuthenticated : true, loading : false});
         }
         catch (error) {
-            set({error : "Failed to fetch user data"});
-        }
-        finally {
-            set({loading : false});
+            set({error : "Failed to fetch user data", loading : false});
         }
     },
     logout : () => {

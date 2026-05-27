@@ -1,8 +1,9 @@
 import { connectToDatabase } from "@/lib/mongoose";
 import bcrypt from "bcryptjs";
 import User from "@/models/User";
-import { NextResponse } from "next/server";
-export async function POST(req : Request,res :Response){
+import { NextRequest, NextResponse } from "next/server";
+
+export async function POST(req: NextRequest) {
     try {
         await connectToDatabase()
         const body = await req.json()

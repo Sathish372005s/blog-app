@@ -6,3 +6,8 @@ export const registerSchema = z.object({
     password: z.string().min(6, 'Password must be at least 6 characters long'),
     role : z.enum(["freelancer","client"])
 })
+
+export type RegisterType =
+  z.infer<
+    typeof registerSchema
+  >;
