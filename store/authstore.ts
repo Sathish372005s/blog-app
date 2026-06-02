@@ -1,5 +1,5 @@
 import {create} from 'zustand';
-
+import {Usertype} from '@/types/auth'
 import {registeruser,loginuser,meuser} from '../service/authservice'
 
 interface AuthState {
@@ -9,7 +9,7 @@ interface AuthState {
     token : string | null;
     error : string | null;
     register : (userData : any) => Promise<void>;
-    login : (userData : any) => Promise<void>;
+    login : (userData : any) => Promise<Usertype | undefined>;
     logout : () => void;
     me : () => Promise<void>;
 }
@@ -38,8 +38,12 @@ export const useAuthStore = create<AuthState>((set)=>({
             console.log('login function called with server:', userData);
             set({loading : true});
             const response = await loginuser(userData);
+            console.log(response.token);
+            document.cookie =
+                    `token=${response.token}; path=/; max-age=86400; SameSite=Lax`;
+            console.log("for cookie check",document.cookie);
+            
             console.log('login response:', response);
-
             set({user : response.user, isAuthenticated : true, token : response.token, loading : false});
             return response.user;
         }

@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const freelancerDashboard = () => {
+export default function FreelancerDashboard() {
   return (
     <div>freelancerDashboard</div>
   )

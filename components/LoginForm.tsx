@@ -3,18 +3,19 @@
 import {Button} from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-
 import { useRouter } from "next/navigation";
 import {  useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema,LoginType } from "@/app/schema/loginschema";
+import { loginSchema,LoginType } from "@/app/validation/loginschema";
 import { Field, FieldGroup, FieldLabel } from "./ui/field";
 import {useAuthStore} from "@/store/authstore";
 import { Spinner } from "./ui/spinner";
 
 
-export default function LoginForm() {
 
+
+export default function LoginForm() {
+    
     const {loading} = useAuthStore();
     const loginuser = useAuthStore((state) => state.login);
     const router = useRouter();
@@ -26,17 +27,23 @@ export default function LoginForm() {
         }
     });
 
-    type LoginResponse = { _id: string; name: string; email: string; role: "client" | "freelancer"; };
 
     const onsubmit = async (data: any) =>{
         console.log('login called with:', data);
-        const loginResult : LoginResponse | null = await loginuser(data);
-        console.log('login result:', loginResult);
+        const loginResult  = await loginuser(data);
+        console.log('login result:', loginResult?.role);
         if (loginResult?.role === "client") {
+            console.log("move on to client");
             router.push('/client/dashboard');
+            console.log("after move on");
+            return
         }
         else if (loginResult?.role === "freelancer") {
+            console.log('====================================');
+            console.log("move onto freelancer");
+            console.log('====================================');
             router.push('/freelancer/dashboard');
+            return
         }
         router.push('/login');
     }

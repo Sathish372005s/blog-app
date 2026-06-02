@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema,RegisterType } from "@/app/schema/auth";
+import { registerSchema,RegisterType } from "@/app/validation/auth";
 import { Field, FieldGroup, FieldLabel } from "./ui/field";
 import {useAuthStore} from "@/store/authstore";
 

@@ -20,9 +20,15 @@ export async function POST(req :Request){
         if(!ismatch){
             return NextResponse.json({success :false,message : "invalid credentials"},{status : 400})
         }
-        const token = generetetoken({id : existinguser._id})
+        const token = generetetoken({id : existinguser._id, role: existinguser.role})
         const response = NextResponse.json({success :true,message : "login successful",token,user : existinguser},{status : 200})
-        response.headers.set("Set-Cookie",`token=${token}; Path=/; HttpOnly`)
+        response.cookies.set("token", token, {
+            path: "/",
+            httpOnly: true,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 24 * 60 * 60, // maxAge is in seconds (1 day)
+        })
         return response
     } catch (error) {
         console.error('login route error:', error)

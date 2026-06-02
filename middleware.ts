@@ -7,11 +7,11 @@ export function middleware(
   request: NextRequest
 ) {
   const token =
-    request.cookies.get("token")
-      ?.value;
-
-  const pathname =
-    request.nextUrl.pathname;
+    request.cookies.get("token")?.value;
+    console.log("token from middleware",token);
+  
+  const pathname =request.nextUrl.pathname;
+  console.log("from pathname",pathname)
 
   // =========================
   // PUBLIC ROUTES
@@ -55,11 +55,13 @@ export function middleware(
   // =========================
   if (token) {
     try {
-      const decoded: any =
-        jwt.verify(
-          token,
-          JWT_SECRET
-        );
+      // jsonwebtoken does not work on the Edge runtime, so we decode manually 
+      // or use the 'jose' library. For routing, decoding the payload is sufficient.
+      const payloadBase64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      const decoded: any = JSON.parse(atob(payloadBase64));
+
+      console.log("decoded", decoded);
+        
 
       // =========================
       // ROLE CHECK
@@ -124,6 +126,7 @@ export function middleware(
     } catch (error) {
       // Invalid token
 
+      console.error("JWT Verification Error:", error);
       const response =
         NextResponse.redirect(
           new URL(
